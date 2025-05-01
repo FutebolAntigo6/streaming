@@ -2,75 +2,139 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Streaming de Vídeos do YouTube</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Estatísticas do Cristiano Ronaldo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #0A1931, #6A0572);
+      color: #222;
+      padding: 40px 20px;
+    }
+
+    .card {
+      background-color: #ffffff;
+      border-radius: 15px;
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 35px 40px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    h1 {
+      text-align: center;
+      color: #6A0572;
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: #0A1931;
+      border-left: 6px solid #6A0572;
+      padding-left: 10px;
+      margin-top: 35px;
+      font-size: 22px;
+    }
+
+    p {
+      margin: 8px 0;
+      font-size: 16px;
+    }
+
+    .jogo {
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    strong {
+      color: #333;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 25px 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      p {
+        font-size: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
-
-  <h1>Futebol Antigo</h1>
-
-  <!-- Seção Vídeos Em alta -->
-  <div class="section">
-    <p class="highlight">Vídeos Em alta</p>
-    <div class="video-container">
-      <div class="video">
-        <iframe src="https://www.youtube.com/embed/aZrCImjIamg" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
-        <p>Entrevistas Marcantes de Edmundo</p>
-      </div>
-
-      <div class="video">
-        <iframe src="https://www.youtube.com/embed/Hv8pdplD1OU" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
-        <p>A Lei do Retorno: Edilson recusou o Cruzeiro e foi para o Flamengo</p>
-      </div>
-
-      <div class="video">
-        <iframe src="https://www.youtube.com/embed/QLbB2FK2Uss" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
-        <p>O respeito que o Cruzeiro tem no Futebol Sul-Americano</p>
-      </div>
-
-      <div class="video">
-        <iframe src="https://www.youtube.com/embed/zEZnZwl5sqc" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
-        <p>O Jogador que virou ídolo após a sua morte</p>
-      </div>
-
-      <div class="video">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/b7lXrfAEoq8?si=xLEZdIe8w5fOqhDT" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>        
-        <p>De um Jogador Ruim a um Excelente Treinador</p>
-      </div>
-
-    </div>
+  <div class="card">
+    <h1>Estatísticas do Cristiano Ronaldo</h1>
+    <div id="ultimoGol"></div>
+    <div id="carreira"></div>
+    <div id="proximosJogos"></div>
   </div>
 
-  <!-- Seção Melhores Produções com uma nova classe "best-productions-section" -->
-  <div class="best-productions-section">
-    <p class="highlight-productions">Melhores Produções</p>
-    <div class="best-productions-container">
-      <div class="video">
-        <iframe src="https://www.youtube.com/embed/WJps09ofj7Q" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
-        <p>Hertha Berlim: O início e o fim</p>
-      </div>
+  <script>
+    const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXGIaXIHqsgswwIsAPgzIkPxXFZAoVb23GdQ4EVMFvUWiJR1c0iMz-lxJBnf3O9p8coIvXrEdhG_dV/pub?gid=";
+    const end = "&single=true&output=csv";
 
-      <div class="video">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/RtV0DhOnfQY?si=oPuqMzVszG6GeV76" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>        
-        <p>Assim se Inicio o Futebol</p>
-      </div>
+    async function carregarDados(gid) {
+      const res = await fetch(base + gid + end);
+      const texto = await res.text();
+      return texto.trim().split("\n").map(l => l.split(","));
+    }
 
-      <div class="video">
-        <iframe src="https://www.youtube.com/embed/zEZnZwl5sqc" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
-        <p>O Jogador que virou ídolo após a sua morte</p>
-      </div>
+    function criarElementoGol(data) {
+      const [cab, valores] = data;
+      return `
+        <h2>Último Gol</h2>
+        <p><strong>Data do Gol:</strong> ${valores[0]}</p>
+        <p><strong>Time:</strong> ${valores[1]}</p>
+        <p><strong>Competição:</strong> ${valores[2]}</p>
+        <p><strong>Oponente:</strong> ${valores[3]}</p>
+        <p><strong>Gols na Partida:</strong> ${valores[4]}</p>
+      `;
+    }
 
-      <div class="video">
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/Dm5qsZloa7A?si=eRCT7RS2uMlE8ToE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>        
-      <p>Como o Fluminense influenciou a Fundação do Famengo?</p>
-      </div>
+    function criarElementoCarreira(data) {
+      const [cab, valores] = data;
+      return `
+        <h2>Carreira</h2>
+        <p><strong>Total de Gols:</strong> ${valores[0]}</p>
+        <p><strong>Total de Jogos:</strong> ${valores[1]}</p>
+      `;
+    }
 
-      <div class="video">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/AF_MofJmJb4?si=UaKlype9NJEvpgcs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>        
-        <p>Conheça os ganhadores da Bola de Ouro pelo Barcelona</p>
-      </div>
-  </div>
+    function criarElementoProximosJogos(data) {
+      let html = `<h2>Próximos Jogos</h2>`;
+      for (let i = 1; i < data.length; i++) {
+        const [adversario, competicao, dataJogo, horario] = data[i];
+        html += `
+          <div class="jogo">
+            <p><strong>Adversário:</strong> ${adversario}</p>
+            <p><strong>Competição:</strong> ${competicao}</p>
+            <p><strong>Data:</strong> ${dataJogo} - <strong>Horário:</strong> ${horario}</p>
+          </div>
+        `;
+      }
+      return html;
+    }
 
+    async function montarPagina() {
+      const gol = await carregarDados("1986676841");
+      const carreira = await carregarDados("1427703403");
+      const jogos = await carregarDados("0");
+
+      document.getElementById("ultimoGol").innerHTML = criarElementoGol(gol);
+      document.getElementById("carreira").innerHTML = criarElementoCarreira(carreira);
+      document.getElementById("proximosJogos").innerHTML = criarElementoProximosJogos(jogos);
+    }
+
+    montarPagina();
+  </script>
 </body>
 </html>
