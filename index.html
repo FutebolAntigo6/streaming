@@ -77,15 +77,7 @@
     <div id="carreira"></div>
     <div id="proximosJogos"></div>
   </div>
-<script>
-  function sendHeight() {
-    const height = document.body.scrollHeight;
-    window.parent.postMessage({ height: height }, "*");
-  }
 
-  window.addEventListener("load", sendHeight);
-  window.addEventListener("resize", sendHeight);
-</script>
   <script>
     const base = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXGIaXIHqsgswwIsAPgzIkPxXFZAoVb23GdQ4EVMFvUWiJR1c0iMz-lxJBnf3O9p8coIvXrEdhG_dV/pub?gid=";
     const end = "&single=true&output=csv";
@@ -132,6 +124,11 @@
       return html;
     }
 
+    function sendHeight() {
+      const height = document.body.scrollHeight;
+      window.parent.postMessage({ height: height }, "*");
+    }
+
     async function montarPagina() {
       const gol = await carregarDados("1986676841");
       const carreira = await carregarDados("1427703403");
@@ -140,9 +137,13 @@
       document.getElementById("ultimoGol").innerHTML = criarElementoGol(gol);
       document.getElementById("carreira").innerHTML = criarElementoCarreira(carreira);
       document.getElementById("proximosJogos").innerHTML = criarElementoProximosJogos(jogos);
+
+      // Enviar a altura após montar tudo
+      sendHeight();
     }
 
-    montarPagina();
+    window.addEventListener("load", montarPagina);
+    window.addEventListener("resize", sendHeight);
   </script>
 </body>
 </html>
