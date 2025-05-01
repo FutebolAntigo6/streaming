@@ -124,11 +124,6 @@
       return html;
     }
 
-    function sendHeight() {
-      const height = document.body.scrollHeight;
-      window.parent.postMessage({ height: height }, "*");
-    }
-
     async function montarPagina() {
       const gol = await carregarDados("1986676841");
       const carreira = await carregarDados("1427703403");
@@ -138,12 +133,12 @@
       document.getElementById("carreira").innerHTML = criarElementoCarreira(carreira);
       document.getElementById("proximosJogos").innerHTML = criarElementoProximosJogos(jogos);
 
-      // Enviar a altura após montar tudo
-      sendHeight();
+      // ⬇️ Envia altura correta após inserir todo o conteúdo
+      const height = document.body.scrollHeight;
+      window.parent.postMessage({ height: height }, "*");
     }
 
-    window.addEventListener("load", montarPagina);
-    window.addEventListener("resize", sendHeight);
+    montarPagina();
   </script>
 </body>
 </html>
